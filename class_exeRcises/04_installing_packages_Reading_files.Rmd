@@ -361,3 +361,15 @@ EXCERCISE
 Use what we learned above to plot a historgram of all the proteins that are in the medium sized category for total genome coverage.
 
 Make a table with just the medium coverage DBPs
+
+```{r}
+mediums <- peaks_per_dbp %>%
+  filter(genome_coverage_size=="medium")
+
+pdf("figures/hist_of_peaks_per_medium_dbp.pdf")
+
+hist(mediums$total_peak_length)
+dev.off()
+
+```
+
