@@ -132,7 +132,7 @@ head(peaks_per_dbp)
 # Let's get more infomration about these peaks with table
 
 table(peaks_per_dbp$dbp)
-sumarty(peaks_per_dbp$dbp)
+summary(peaks_per_dbp$dbp)
 
 # Not very useful in this case because there is only one entry for each DBP
 
