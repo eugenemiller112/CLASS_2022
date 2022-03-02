@@ -40,8 +40,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(GenomicRanges)
 library(rtracklayer)
 library(tidyverse)
-library(ggpubr)
-library(Gviz)
+#library(ggpubr)
+#library(Gviz)
 # source("/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/util/_setup.R")
 # source("/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/util/intersect_functions.R")
 # source("./scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/util/plotting_functions.R")
@@ -275,8 +275,8 @@ Now let's define the promoters using the handy promoters function in GRanges
 ?promoters
 # let's add 3Kb upstream and downstream from the TSS to define "promoters"
 gencode_promoters <- promoters(gencode_gr[gencode_gr$type == "gene"], 
-                               upstream = 3e3, 
-                               downstream = 3e3)
+                               upstream = 1e3, 
+                               downstream = 1e3)
 length(gencode_promoters)
 # there are ~60,000 promoters 
 ```
@@ -399,6 +399,14 @@ Let's bring this all back together.
 So 7,738 overlapping peaks resulted in 13,771 overlaps with promoters which represented 13,299 unique promoters.
 
 
+*********************
+Idea
+*********************
+The promoters that had multiple peak overlaps are larger. 
+```{r}
+
+```
+
 
 *********************
 EXCERCISE
@@ -408,6 +416,17 @@ EXCERCISE
 What happens if we shrink the promoter windows? Some standards are 2Kb upstream 1kb down stream. 
 Some could be as small as 1Kb upstream 500Kb downstream. Try two different promter window sizes and record
 @from and @to values as well as unique peaks. 
+
+For 6kb up/down
+16363 = length(promoter_overlaps@to) = length(promoter_overlaps@from)
+8306 = length(table(promoter_overlaps@from))
+
+For 1kb up/down
+12344 = length(promoter_overlaps@to) = length(promoter_overlaps@from)
+7355 = length(table(promoter_overlaps@from))
+
+
+
 
 
 
