@@ -12,11 +12,11 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(echo = TRUE)
 library(GenomicRanges)
 library(tidyverse)
-library(Gviz)
+#library(Gviz)
 library(IRanges)
-source("../../../util/_setup.R")
-source("../../../util/intersect_functions.R")
-source("../../../util/plotting_functions.R")
+#source("../../../util/_setup.R")
+#source("../../../util/intersect_functions.R")
+#source("../../../util/plotting_functions.R")
 ```
 
 Goal: to understand the basic usage of Iranges and Granges. These are core to almost
@@ -180,7 +180,7 @@ I have some set up to test in the data folder.
 
 # first we read the consensus peak files in as gRanges object with rtracklayer function.
 
-peaks1 <- rtracklayer::import("/scratch/Shares/rinnclass/CLASS_2022/data/POLR2A_consensus_peaks_filter.bed")
+peaks1 <- rtracklayer::import("/scratch/Shares/rinnclass/CLASS_2022/data/POLR2A_consensus_peaks_filter.bed") 
 
 peaks2 <- rtracklayer::import("/scratch/Shares/rinnclass/CLASS_2022/data/POLR2B_consensus_peaks_filter.bed")
  
