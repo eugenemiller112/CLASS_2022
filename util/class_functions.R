@@ -10,7 +10,7 @@ fun <- function(x, y) {
   return(ans)
 }
 
-
+# extracting TF name as a variable along the way (check env)
 import_peaks <- function(consensus_file_path = "/scratch/Shares/rinnclass/CLASS_2022/data/peaks") {
   
   # Setting some variables needed in main part of function (same as above -- peak_files & tf_name)
@@ -36,6 +36,8 @@ import_peaks <- function(consensus_file_path = "/scratch/Shares/rinnclass/CLASS_
   return(peak_list)
 }
 
+#We can now use this to find overlaps in replicates using another function
+#"intersect peaks" 
 intersect_peaks <- function(peak_list) {
   
   combined_peaks <- peak_list[[1]]
@@ -49,7 +51,9 @@ intersect_peaks <- function(peak_list) {
   return(combined_peaks)
 }
 
-
+#The next function we need as a sub function of consensus peaks is:
+#  read_peaks function
+#This function basically just filters peaks to cannonical chromosomes.
 read_peaks <- function(broad_peak_file, filter_to_canonical_chr = TRUE) {
   dat <- read.table(broad_peak_file, sep = "\t")
   if(filter_to_canonical_chr == TRUE) {
@@ -59,7 +63,6 @@ read_peaks <- function(broad_peak_file, filter_to_canonical_chr = TRUE) {
                 ranges = IRanges(start=dat$V2,end=dat$V3))
   return(gr)
 }
-
 
 # This is just setting up to name the funciton.
 create_consensus_peaks <- function(broadpeakfilepath = "/scratch/Shares/rinnclass/CLASS_2022/data/peaks/") {
@@ -124,3 +127,6 @@ create_consensus_peaks <- function(broadpeakfilepath = "/scratch/Shares/rinnclas
   }
   return(consensus_peaks)
 }
+
+
+
