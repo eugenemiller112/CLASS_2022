@@ -38,7 +38,7 @@ Today we are going to practice running the create_consensus_peaks function. Then
 ```{R exporting consensus peaks to 11 directory}
 # for(i in 1:length(consensus_peaks)) {
 #  rtracklayer::export(consensus_peaks[[i]], 
-#                     paste0("/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/consensus_peaks/", 
+#                     paste0("/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/Analysis/11_consensus_peaks/consensus_peaks/", 
 #                             names(consensus_peaks)[i], 
 #                             "_consensus_peaks.bed"))
 # }
@@ -61,11 +61,11 @@ gencode_gr <- rtracklayer::import("/scratch/Shares/rinnclass/CLASS_2022/data/gen
 lncrna_mrna_promoters <- get_promoter_regions(gencode_gr, biotype = c("lncRNA", "protein_coding"))
 gencode_gr@biotype
 # export to save for later
-rtracklayer::export(lncrna_mrna_promoters, "/scratch/Shares/rinnclass/CLASS_2022/<your_folder>/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/gene_annotation_files/lncRNA_mrna_promoters.gtf")
-# "/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/gene_annotation_files/lncRNA_mrna_promoters.gtf")
+rtracklayer::export(lncrna_mrna_promoters, "/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/12_creating_consensus_peaks/gene_annotation_files/lncRNA_mrna_promoters.gtf")
+# "/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/Analysis/11_consensus_peaks/gene_annotation_files/lncRNA_mrna_promoters.gtf")
 # let's do a test reimport as we will do this often too.
-lncrna_mrna_promoters <- rtracklayer::import("/scratch/Shares/rinnclass/CLASS_2022/<your_folder>/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/gene_annotation_files/lncRNA_mrna_promoters.gtf")
-# lncrna_mrna_promoters <- rtracklayer::import("/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/gene_annotation_files/lncRNA_mrna_promoters.gtf")
+lncrna_mrna_promoters <- rtracklayer::import("/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/12_creating_consensus_peaks/gene_annotation_files/lncRNA_mrna_promoters.gtf")
+# lncrna_mrna_promoters <- rtracklayer::import("/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/Analysis/11_consensus_peaks/gene_annotation_files/lncRNA_mrna_promoters.gtf")
 # now we can add names as "meta data" 
 names(lncrna_mrna_promoters) <- lncrna_mrna_promoters$gene_id
 ```
@@ -75,16 +75,16 @@ names(lncrna_mrna_promoters) <- lncrna_mrna_promoters$gene_id
 # creating lncRNAs promoter features
 lncrna_promoters <- get_promoter_regions(gencode_gr, biotype = "lncRNA")
 # exporting
-rtracklayer::export(lncrna_promoters, "/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/gene_annotation_files/lncrna_promoters.gtf")
+rtracklayer::export(lncrna_promoters, "/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/12_creating_consensus_peaks/gene_annotation_files/lncrna_promoters.gtf")
 # let's reimport and add names
-lncrna_promoters <- rtracklayer::import("/scratch/Shares/rinnclass/CLASS_2022/<your_folder>/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/gene_annotation_files/lncrna_promoters.gtf")
-#lncrna_promoters <- rtracklayer::import("/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/gene_annotation_files/lncrna_promoters.gtf")
+lncrna_promoters <- rtracklayer::import("/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/12_creating_consensus_peaks/gene_annotation_files/lncrna_promoters.gtf")
+#lncrna_promoters <- rtracklayer::import("/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/Analysis/11_consensus_peaks/gene_annotation_files/lncrna_promoters.gtf")
 # finally mRNA promoters
 mrna_promoters <- get_promoter_regions(gencode_gr, biotype = "protein_coding")
 # exporting
-rtracklayer::export(mrna_promoters, "/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/gene_annotation_files/mrna_promoters.gtf") 
+rtracklayer::export(mrna_promoters, "/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/12_creating_consensus_peaks/gene_annotation_files/mrna_promoters.gtf") 
 # let's reimport and add names
-mrna_promoters <- rtracklayer::import( "/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/gene_annotation_files/mrna_promoters.gtf") 
+mrna_promoters <- rtracklayer::import( "/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/12_creating_consensus_peaks/gene_annotation_files/mrna_promoters.gtf") 
 # Let's look more closely with a data frame.
 mrna_promoters_df <- mrna_promoters %>%
   as.data.frame()
@@ -101,20 +101,20 @@ lncrna_mrna_genebody <- gencode_gr[gencode_gr$type == "gene" &
 # check out where this came from:
 gencode_gr$gene_type
 # exporting
-rtracklayer::export(lncrna_mrna_genebody, "/scratch/Shares/rinnclass/CLASS_2022/<your_folder>/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/gene_annotation_files/lncrna_mrna_genebody.gtf")
-# rtracklayer::export(lncrna_mrna_genebody,"/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/gene_annotation_files/lncrna_mrna_genebody.gtf")
+rtracklayer::export(lncrna_mrna_genebody, "/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/12_creating_consensus_peaks/gene_annotation_files/lncrna_mrna_genebody.gtf")
+# rtracklayer::export(lncrna_mrna_genebody,"/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/Analysis/11_consensus_peaks/gene_annotation_files/lncrna_mrna_genebody.gtf")
 # lncRNA genebodies
 lncrna_genebody <- gencode_gr[gencode_gr$type == "gene" & 
                                 gencode_gr$gene_type %in% c("lncRNA")]
 # exporting
-rtracklayer::export(lncrna_genebody, "/scratch/Shares/rinnclass/CLASS_2022/<your_folder>/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/gene_annotation_files/lncrna_genebody.gtf")
-# rtracklayer::export(lncrna_genebody, "/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/gene_annotation_files/lncrna_genebody.gtf")
+rtracklayer::export(lncrna_genebody, "/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/12_creating_consensus_peaks/gene_annotation_files/lncrna_genebody.gtf")
+# rtracklayer::export(lncrna_genebody, "/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/Analysis/11_consensus_peaks/gene_annotation_files/lncrna_genebody.gtf")
 # mrna gene bodies
 mrna_genebody <- gencode_gr[gencode_gr$type == "gene" & 
                               gencode_gr$gene_type %in% c("protein_coding")]
 # exporting
-# rtracklayer::export(mrna_genebody, "/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/gene_annotation_files/mrna_genebody.gtf")
-rtracklayer::export(mrna_genebody, "/scratch/Shares/rinnclass/CLASS_2022/<your_folder>/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/gene_annotation_files/mrna_genebody.gtf")
+# rtracklayer::export(mrna_genebody, "/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/Analysis/11_consensus_peaks/gene_annotation_files/mrna_genebody.gtf")
+rtracklayer::export(mrna_genebody, "/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/12_creating_consensus_peaks/gene_annotation_files/mrna_genebody.gtf")
 ```
 
 
@@ -126,9 +126,9 @@ rtracklayer::export(mrna_genebody, "/scratch/Shares/rinnclass/CLASS_2022/<your_f
 # Nice this only took 30 min locally
 # normally is 3hrs in local environment
 # long runs are best done as local job outside Rstudio!
-consensus_fl <- list.files("/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/consensus_peaks", full.names = T)
+consensus_fl <- list.files("/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/11_r_functions/consensus_peaks", full.names = T)
 consensus_peaks <- lapply(consensus_fl, rtracklayer::import)
-names(consensus_peaks) <- gsub("/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/consensus_peaks/|_consensus_peaks.bed","", consensus_fl)
+names(consensus_peaks) <- gsub("/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/11_r_functions/consensus_peaks/|_consensus_peaks.bed","", consensus_fl)
 # let's take a look
 summary(consensus_peaks)
 # note CTCF went from 30,000 some peaks to 28,640 that overlap in all 8 replicates
@@ -162,7 +162,7 @@ table(summary(filtered_consensus_peaks))
 # Now let's export the filtered consensus peaks
 for(i in 1:length(filtered_consensus_peaks)) {
   rtracklayer::export(consensus_peaks[[i]], 
-                      paste0("/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/filtered_consensus_peaks/", 
+                      paste0("/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/12_creating_consensus_peaks/filtered_consensus_peaks/", 
                              names(consensus_peaks)[i], 
                              "_filtrered_consensus_peaks.bed"))
 }
@@ -189,7 +189,7 @@ Below is the code we will use to do that
 
 ```{r START POINT reimporting filtered consensus peaks}
 # making a file list
-filtered_consensus_peaks_files <- list.files("/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/11_consensus_peaks/filtered_consensus_peaks", 
+filtered_consensus_peaks_files <- list.files("/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/12_creating_consensus_peaks/filtered_consensus_peaks", 
                                              pattern = "*.bed",
                                              full.names = TRUE)
 # like a for loop we can use lapply to recursively load each file in the "peak_files"
