@@ -11,7 +11,7 @@ consensus_peaks <- create_consensus_peaks("/scratch/Shares/rinnclass/CLASS_2022/
 # *** Make sure "consensus_peaks" directory is there
 for(i in 1:length(consensus_peaks)) {
   rtracklayer::export(consensus_peaks[[i]], 
-                      paste0("/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/11_consensus_peaks/consensus_peaks/", 
+                      paste0("/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/11_r_functions/consensus_peaks/", 
                              names(consensus_peaks)[i], 
                              "_consensus_peaks.bed"))
 }
