@@ -184,7 +184,7 @@ num_peaks_df <- merge(num_peaks_df, human_tfs, all.x = T)
 # Let's check how many NAs -- we should have some missing values.
 length(is.na(num_peaks_df$is_tf))
 # Ok looks good let's write it out:
-write_csv(num_peaks_df, "/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/analysis/13_ChiP_peak_features/num_peaks_df.csv")
+write_csv(num_peaks_df, "/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/13_ChiP_peak_features/num_peaks_df.csv")
 # write_csv(num_peaks_df, "/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/12_peak_features/num_peaks_df.csv")
 ```
 
@@ -202,7 +202,7 @@ stopifnot(all(colnames(promoter_peak_occurence) == lncrna_mrna_promoters$gene_id
 # we are going to write it out a tab seperated values (tsv) file
 # moving forward we will use (?read.tsv) to read this in and save us all that run time :)
 # DON'T OPEN THIS FILE IN THE ENVIRONMENT -- VERY LARGE MATRIX
-write.table(promoter_peak_occurence, "/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/analysis/13_ChiP_peak_features/lncrna_mrna_promoter_peak_occurence_matrix.tsv")
+write.table(promoter_peak_occurence, "/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/13_ChiP_peak_features/lncrna_mrna_promoter_peak_occurence_matrix.tsv")
 # write.table(promoter_peak_occurence, "/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/12_peak_features/lncrna_mrna_promoter_peak_occurence_matrix.tsv")
 ```
 
@@ -224,7 +224,7 @@ peak_occurence_df <- data.frame("gene_id" = colnames(promoter_peak_occurence),
                                 "number_of_dbp" = colSums(promoter_peak_occurence))
 # Go through each population index by highlighting and running
 # Let's write out this data frame -- all this code & run time is now encapsulated in one .csv :)
-write_csv(peak_occurence_df, "/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/analysis/13_ChiP_peak_features/peak_occurence_dataframe.csv")
+write_csv(peak_occurence_df, "/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/13_ChiP_peak_features/peak_occurence_dataframe.csv")
 # write_csv(peak_occurence_df, "/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/12_peak_features/peak_occurence_dataframe.csv")
 # Cool feel free to open this one -- even in excel :) 
 ```
