@@ -198,3 +198,82 @@ profile_tss <- function(peaks,
   return(metaplot_df)
 }
 
+
+## This will generate a request URL in the format that ENCODE requires to retrieve each of the columns listed in the field default parameter (accession, read_count, md5sum, etc.)
+# first let's set up the function and it's parameters
+contstruct_query <- function(experiment_accession,
+                             base_url = "https://www.encodeproject.org/report.tsv?",
+                             file_format = "fastq",
+                             type = "File",
+                             status = "released",
+                             fields = c("accession", "read_count", "md5sum",
+                                        "controlled_by", "paired_end",
+                                        "paired_with", "replicate", "target")) {
+  
+  # Now we will populate this structure above, note experiment_accession is only
+  # parameter we need to populate
+  # We are copying the terminology used in REQUEST_URL or communicate with API
+  query <- paste(list(paste0("type=", type),
+                      paste0("status=", status),
+                      paste0("file_format=", file_format),
+                      
+                      # We are using same language as Encode API that has %2F as separator
+                      paste0("dataset=%2Fexperiments%2F", experiment_accession, "%2F"),
+                      
+                      # map is a way of transforming input and applying a function
+                      # in this case we are just using "paste0" as the function
+                      # map_chr is to make sure it stays as a character value
+                      map_chr(fields, ~paste0("field=", .))) %>%
+                   flatten(),
+                 collapse = "&")
+  url <- paste0(base_url, query)
+  return(url)
+}
+# essentially we just recreated the base URL with addition information 
+# in fact using the logic we got Md5 values and they are not accessible on web!
+
+
+# setting up the function and parameters
+# this function will go get the data from the URL we made above
+encode_file_info <- function(experiment_accession,
+                             base_url = "https://www.encodeproject.org/report.tsv?",
+                             file_format = "fastq",
+                             type = "File",
+                             status = "released",
+                             fields = c("accession", "read_count", "md5sum",
+                                        "controlled_by", "paired_end",
+                                        "paired_with", "replicate", "target")) {
+  
+  # Now we are creating a url that encode will understand
+  path <- "report.tsv?"
+  base_url <- modify_url("https://www.encodeproject.org/", path = path)
+  url <- contstruct_query(experiment_accession,
+                          base_url = base_url,
+                          file_format,
+                          type,
+                          status,
+                          fields)
+  # this is now retrieving the data with GET function in httr
+  resp <- GET(url)
+  if (http_error(resp)) {
+    error_message <- content(resp, type = "text/html", encoding = "UTF-8") %>%
+      xml_find_all("//p") %>%
+      xml_text() %>%
+      first()
+    stop(
+      sprintf(
+        "ENCODE API request failed [%s]\n%s",
+        status_code(resp),
+        error_message
+      ),
+      call. = FALSE
+    )
+  }
+  
+  if (http_type(resp) != "text/tsv") {
+    stop("API did not return text/tsv", call. = FALSE)
+  }
+  body <- read_tsv(content(resp, "text"), skip = 1) %>%
+    clean_names()
+  return(body)
+}
