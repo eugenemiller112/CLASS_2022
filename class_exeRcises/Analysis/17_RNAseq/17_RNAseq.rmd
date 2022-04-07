@@ -11,13 +11,14 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 options(stringsAsFactors = FALSE)
 library(tidyverse)
-
+# install.packages("httr")
 library(httr)
-
+# install.packages("janitor")
 library(janitor)
-
+# install.packages("purrr")
 library(purrr)
-source("/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/util/encode_functions.R")
+source("/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/util/class_functions.R")
+# source("/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/util/encode_functions.R")
 ```
 
 Goal: to downlaod a RNAseq data from HEPG2 that is fractionated by cellular compartment
@@ -228,13 +229,14 @@ is places on "cell" of an excel file. So each cell contains an excel sheet in th
 ```{r MAP example}
 # In this example we'll take the digits 1 through 10 and "map" each to the rnorm function. 
 map_example <- 1:10 %>%
-  map(rnorm, n = 10) 
+  map(rnorm, n = 1000) 
 # It returns a nested list, let's look:
 summary(map_example)
 # Let's look with table
 table(summary(map_example))
 # let's index and look
 map_example[[1]]
+hist(map_example[[1]])
 # another one
 map_example[[2]]
 # indexing to the first component of map vector
@@ -263,21 +265,17 @@ Each experiment accession has multiple files associated with the accession
 Let's use map to map each experiment to it's experiment accession and clean up sample sheet
 
 ```{r MAP to experiment_accession}
+?mutate
+?map
 # We are making a new column in samples called file_info. This is created
 # by mapping experiment_accession and putting the variable through encode_file_info function.
-# This will map all associated files with the each experiment accession
+# This will map the information (8 fields) retrieved by encode_file_info function by 
+# experiment_accession in a column called file_info.
 samples <- samples %>%
+  # note function inside a function being called.
   mutate(file_info = map(experiment_accession, ~ encode_file_info(.x)))
-    # note function inside a function being called.
-# This is the same as running the function encode_file_info for each experiment
-# in file_info. That we ran above:
-dat <- encode_file_info("ENCSR541TIG")
 # Thus for each accession in experiment_accession mutate will use the function MAP
 # to map each experimental file to the "file_info" column and keep the data there.
-# Check out "dat" in environment -- now file_info is a single entry with the dat data.frame inside.
-# This short bit of code is doing a lot!
-# we make a new column 'file_info'
-# each entry will be the information gained from the encode_file_info function
 ```
 
 # Unnesting the data from MAP
@@ -285,13 +283,14 @@ This is a bit hard to read in this format, so we can unnest the data.frames in t
 This will duplicate the remaining columns to match the number of lines in the nested data.frame.
 
 ```{r unnesting MAP}
+?unnest
+# This function will extract the mapped info and make new cols and rows
 # We also need to tell it which column we want to unnest.
 # note samples is currently 5 rows
 samples <- samples %>%
   unnest(cols = file_info)
 # Now samples is 20 rows from unnesting the 5 previous rows.
-# Amazing now we have all the information for each file in all the experiment accessions
-# we will use this to start making a sample_sheet.
+# This is because each experimental accession had 4 files for 5 exp accession = 20 rows
 ```
 
 # cleaning up sample sheet
@@ -311,14 +310,17 @@ samples <- samples %>%
 
 # getting rid of non essential data
 Now let's get rid of all that data we don't need! 
+
 ```{r removing data from sample sheet}
 # We're just selecting a subset of columns from samples with dplyr::select
 samples <- samples %>%
    dplyr::select(accession, sample_id, experiment_accession, Assay.title,
                 Biosample.summary, md5sum, paired_end_identifier) %>%
-  # Note that we're not removing the original columns
+  
+  # here we are going to start to build the fastq file name for NF_core input
   unite(fastq_file, sample_id, paired_end_identifier, sep = "_read", remove = F)
 # Now we have a new col fastq_file with the information for each fastq file
+# We will keep adding to this until we get to the final NF_Core input file name.
 ```
 
 # Setting up filename for NF_CORE rnaseq pipeline
@@ -327,9 +329,11 @@ For the nf-core/rnaseq pipeline, the paired-end reads need to be named
 with the read number in the filename. 
 
 ```{r filename for NF_CORE rnaseq pipeline: adding .fastq.gz to fastq_file}
+# We are now making a new column with .fastq.gz extension and then unite to make fastq file name.
 samples <- samples %>%
   mutate(fq_extension = ".fastq.gz") %>%
   unite(fastq_file, fastq_file, fq_extension, sep = "", remove = F) %>%
+  
   # This original file column will be used along with the new name column to rename the fastq files.
   unite(original_file, accession, fq_extension, sep = "")
 # nice we see a fastq file column and can be used as input into NF_CORE
@@ -374,36 +378,44 @@ rename_script <- samples %>%
 # The result of this is that each row is a bash command.
 # We can write this out as a bash script with ?write_lines 
 # We include a shebang header line so that the script is interpreted by bash.
-write_lines(c("#!/bin/bash", rename_script$command), "fastq/rename.sh")
-# Here we use an R command to call bash and cd into that directory, then make the file executable, and then run it.
+?write_lines
+write_lines(c("#!/bin/bash", rename_script$command), "rename.sh")
 # Now cd fastq and "chmod u+x rename.sh
 # then ./rename.sh
 # >>> voila all the files are renamed
 ```
-
 
 # md5sum check on file downloads
 Additionally from all of this information we've gathered we can create a text file to run the md5sum check.
 
 ```{r md5sum of fastq}
 # Let's create an md5.txt to run the checksums
+# We will use the same approach for the mv script.
 md5 <- samples %>% 
   ungroup() %>%
   dplyr::select(md5sum, fastq_file) %>%
+  # note double space for md5 requirements 
   unite(line, md5sum, fastq_file, sep = "  ")
-write_lines(md5$line, "fastq/md5.txt")
-# Now let's run it.
+# writting out md5$line col that has the command in it from above.
+write_lines(md5$line, "md5.txt")
+# Now let's run it from R to BASH with "system()" function
  md5_results <- system("cd fastq; md5sum -c md5.txt")
  
+# md5 -c md5.txt > md5_check.txt
+ 
+ #TODO here is a solution to run system and get object:
+ # To output the md5_check as an R vector, add the "intern = TRUE" argument to the system() function:
+# md5_results <- system("cd 17/fastq; md5sum -c md5.txt", intern = TRUE)
+ #TODO check on system runs populating variables
 # Nice they all look correct -- but let's save this result
-write.csv(md5, "fastq/md5_check.csv")
+# write.csv(md5_results, "md5_check.csv")
 ```
 
 # finalizing sample sheet for NF_CORE
 Finally, we can write out a nicely formatted sample sheet 
 that we will use downstream for further analysis of the read counts in R.
 
-```{r rename some columns}
+```{r Reorganizing to make a sample sheet for DEseq2}
 # Let's create the sample sheet that we will use later
 # to do the RNA-seq analysis in R.
 samples <- samples %>%
@@ -459,6 +471,7 @@ samplesheet <- samplesheet %>%
                 cell_type, seq_type, fastq_1, fastq_2, md5sum_1,
                 md5sum_2)
 # that was a lot of work so let's save for future use :) 
+# Writting this out to 17_ test_2
 write_csv(samplesheet, "samplesheet.csv")
 ```
 
@@ -477,6 +490,7 @@ It needs the following columns:
 Let's create a sample column using mutate -- and we'll clean up the names
 
 ```{r creating design file}
+base_path <- "/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/analysis/17_API_RNASEQ/fastq/"
 # base_path <- paste0("/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/17_API_RNASEQ/fastq/")
 # There's spaces in the names currently and we need to get rid of those.
 design <- samplesheet %>%
@@ -511,6 +525,7 @@ design <- design %>%
 all(sapply(design$fastq_1, file.exists))
 all(sapply(design$fastq_2, file.exists))
 # Now we can write this out for input into nextflow
+# Writting out to 17_ test_2
 write_csv(design, "design.csv")
 write_csv(samples, "samples.csv")
 write_csv(samplesheet, "samplesheet.csv")
@@ -519,8 +534,6 @@ write_csv(samplesheet, "samplesheet.csv")
 
 Now we have the raw files downloaded and the samplesheet needed for downstream analyses (ex, differential expression). So the next step is to run nf-core/rnaseq on these samples.
 We'll do this in the RNAseq II.
-
-
 
 
 # Storing encode function just in case since mine went bad :
