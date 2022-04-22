@@ -1,0 +1,70 @@
+---
+title: "2KB group"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
+library(Gviz)
+library(ggpubr)
+library(ggplot2)
+library(tidyverse)
+library(GenomicRanges)
+source("/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/util/intersect_functions.R")
+source("/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/util/plotting_functions.R")
+source("/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/util/_setup.R")
+```
+
+```{r}
+gencode_gr <- rtracklayer::import("/scratch/Shares/rinnclass/CLASS_2022/data/genomes/gencode.v32.annotation.gtf")
+
+# Loading in files via listing and rtracklayer import
+consensus_fl <- list.files("/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/11_r_functions/consensus_peaks", full.names = T)
+# importing (takes ~5min)
+consensus_peaks <- lapply(consensus_fl, rtracklayer::import)
+# cleaning up file names
+names(consensus_peaks) <- gsub("/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/Analysis/11_r_functions/consensus_peaks/|_consensus_peaks.bed","", consensus_fl)
+# Filtering consensus peaks to those DBPs with at least 250 peaks
+num_peaks_threshold <- 250
+num_peaks <- sapply(consensus_peaks, length)
+filtered_consensus_peaks <- consensus_peaks[num_peaks > num_peaks_threshold]
+# Result: these were the DBPs that were filtered out.
+filtered_dbps <- consensus_peaks[num_peaks < num_peaks_threshold]
+names(filtered_dbps)
+# We have this many remaining DBPs
+length(filtered_consensus_peaks)
+```
+
+
+```{r}
+numbers = seq(0,10000, by = 500)
+#numbers = c(0,5000,10000) # fail small....
+
+mrna_mat = matrix(numeric(), ncol = 19965, nrow = length(numbers))
+lncrna_mat = matrix(numeric(), ncol = 16849, nrow = length(numbers))
+
+for (i in 1:length(numbers)){
+  lncrna_promoters <- get_promoter_regions(gencode_gr, biotype = "lncRNA",     
+                                           upstream = numbers[i]/2, downstream = numbers[i]/2)
+  mrna_promoters <- get_promoter_regions(gencode_gr, biotype = "protein_coding",     
+                                           upstream = numbers[i]/2, downstream = numbers[i]/2)
+  
+  names(mrna_promoters) <- mrna_promoters$gene_id
+  mrna_promoter_peak_counts <- count_peaks_per_feature(mrna_promoters, filtered_consensus_peaks, type = "counts")
+  
+  names(lncrna_promoters) <- lncrna_promoters$gene_id
+  lncrna_promoter_peak_counts <- count_peaks_per_feature(lncrna_promoters, filtered_consensus_peaks, type = "counts")
+  
+  mrna_mat[i,] <- colSums(mrna_promoter_peak_counts)
+  lncrna_mat[i,] <- colSums(lncrna_promoter_peak_counts)
+}
+```
+
+```{r}
+rownames(mrna_mat) <- as.character(numbers)
+rownames(lncrna_mat) <- as.character(numbers)
+
+colnames(mrna_mat) <- mrna_promoters$gene_id
+colnames(lncrna_mat) <- lncrna_promoters$gene_id
+```
+

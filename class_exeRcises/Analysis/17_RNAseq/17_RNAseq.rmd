@@ -490,7 +490,7 @@ It needs the following columns:
 Let's create a sample column using mutate -- and we'll clean up the names
 
 ```{r creating design file}
-base_path <- "/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/analysis/17_API_RNASEQ/fastq/"
+base_path <- "/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/class_exeRcises/analysis/17_RNAseq/fastq/"
 # base_path <- paste0("/scratch/Shares/rinnclass/CLASS_2022/JR/CLASS_2022/class_exeRcises/analysis/17_API_RNASEQ/fastq/")
 # There's spaces in the names currently and we need to get rid of those.
 design <- samplesheet %>%
