@@ -15,7 +15,6 @@ work/*
 *.RData
 *.rda
 *results*
-*.html
 *.tbl
 *.feather
 *.log

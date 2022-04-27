@@ -1,7 +1,7 @@
 ---
 title: "Investigation of Promoter Window Size on Genomic DBP Activity"
-author: "Breakout 2"
-output: github_document
+author: "William Francis, Eric Young, Eugene Miller, Nickles Badger"
+output: html_document
 ---
 
 We were interested in looking at how the window size around a promoter affects the structure of the bimodal density plot observed in class RMD 20. Specifically we broke down our results by both biotype (mRNA, lncRNA) and by counting method ("count", "occurence"). First we imported the libraries and local functions that we needed to complete this task.
@@ -20,7 +20,7 @@ source("/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/util/plotting_functio
 source("/scratch/Shares/rinnclass/CLASS_2022/EM/CLASS_2022/util/_setup.R")
 ```
 
-Next we imported the Gencode and consensus peak datat that we generated in the class 11 RMD.
+Next we imported the Gencode and consensus peak data that we generated in the class 11 RMD.
 
 ```{r}
 # Code from class 20 RMD

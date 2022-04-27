@@ -8,7 +8,7 @@ affects the structure of the bimodal density plot observed in class RMD
 lncRNA) and by counting method (“count”, “occurence”). First we imported
 the libraries and local functions that we needed to complete this task.
 
-Next we imported the Gencode and consensus peak datat that we generated
+Next we imported the Gencode and consensus peak data that we generated
 in the class 11 RMD.
 
 ``` r
